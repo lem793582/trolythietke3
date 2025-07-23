@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Route API proxy để gọi đến Stability AI một cách an toàn với cơ chế luân chuyển key
+// Route API proxy để gọi đến Hugging Face một cách an toàn
 app.post('/api/generate-image', async (req, res) => {
     const { prompt } = req.body;
 
@@ -27,73 +27,72 @@ app.post('/api/generate-image', async (req, res) => {
         return res.status(400).json({ error: 'Prompt is required' });
     }
 
-    // Lấy danh sách API key từ biến môi trường.
-    // Các key được phân tách bằng dấu phẩy, ví dụ: "key1,key2,key3"
-    const apiKeysString = process.env.STABILITY_API_KEYS;
+    // --- THAY ĐỔI 1: SỬ DỤNG HUGGINGFACE_API_KEYS ---
+    // Lấy danh sách API key của Hugging Face từ biến môi trường.
+    const apiKeysString = process.env.HUGGINGFACE_API_KEYS;
 
     if (!apiKeysString) {
-        console.error('STABILITY_API_KEYS not found in environment variables.');
-        return res.status(500).json({ error: 'API keys are not configured on the server.' });
+        console.error('HUGGINGFACE_API_KEYS not found in environment variables.');
+        return res.status(500).json({ error: 'Hugging Face API keys are not configured on the server.' });
     }
 
-    // Tách chuỗi thành một mảng các key và loại bỏ khoảng trắng thừa
     const apiKeys = apiKeysString.split(',').map(key => key.trim());
 
-    // --- THAY ĐỔI MODEL TẠI ĐÂY ---
-    // Đã chuyển từ 'stable-diffusion-v1-6' sang model SDXL 1.0 theo yêu cầu.
-    const engineId = 'stable-diffusion-xl-base-1.0';
-    const apiHost = 'https://api.stability.ai';
+    // --- THAY ĐỔI 2: ĐỊNH NGHĨA URL CỦA HUGGING FACE MODEL ---
+    const modelUrl = 'https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0';
 
     // Vòng lặp để thử từng key
     for (const apiKey of apiKeys) {
-        console.log(`Trying API key ending with ...${apiKey.slice(-4)}`);
+        console.log(`Trying Hugging Face API key ending with ...${apiKey.slice(-4)}`);
         try {
-            const response = await fetch(`${apiHost}/v1/generation/${engineId}/text-to-image`, {
+            // --- THAY ĐỔI 3: GỌI ĐẾN API CỦA HUGGING FACE ---
+            const response = await fetch(modelUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Accept: 'application/json',
-                    Authorization: `Bearer ${apiKey}`,
+                    'Authorization': `Bearer ${apiKey}`, // Dùng key của Hugging Face
                 },
-                body: JSON.stringify({
-                    text_prompts: [{ text: prompt }],
-                    cfg_scale: 7,
-                    height: 1024,
-                    width: 1024,
-                    steps: 30,
-                    samples: 1,
-                    // style_preset: "anime" // Bạn có thể thêm các tham số cho model XL tại đây nếu cần
-                }),
+                body: JSON.stringify({ inputs: prompt }), // Cấu trúc body cho Hugging Face
             });
 
-            // Nếu key hợp lệ và yêu cầu thành công (status 200 OK)
+            // Nếu key hợp lệ và yêu cầu thành công
             if (response.ok) {
-                console.log(`Success with API key ...${apiKey.slice(-4)}`);
-                const responseJSON = await response.json();
-                return res.json(responseJSON); // Trả kết quả về cho client và kết thúc
+                console.log(`Success with Hugging Face API key ...${apiKey.slice(-4)}`);
+                
+                // Hugging Face trả về dữ liệu nhị phân của ảnh trực tiếp
+                const imageBuffer = await response.buffer();
+                const imageBase64 = imageBuffer.toString('base64');
+
+                // Chuyển đổi về định dạng mà client-side đang mong đợi
+                const clientResponse = {
+                    artifacts: [{
+                        base64: imageBase64
+                    }]
+                };
+                return res.json(clientResponse);
             }
 
-            // Nếu key không hợp lệ hoặc hết tín dụng (401 Unauthorized)
-            // Stability AI thường dùng mã 401 cho các trường hợp này.
+            // Xử lý các lỗi phổ biến từ Hugging Face
             if (response.status === 401) {
-                console.warn(`API key ...${apiKey.slice(-4)} failed (Unauthorized/Out of credits). Trying next key.`);
-                continue; // Bỏ qua key này và thử key tiếp theo trong vòng lặp
+                console.warn(`Hugging Face API key ...${apiKey.slice(-4)} failed (Unauthorized). Trying next key.`);
+                continue;
+            }
+            if (response.status === 503) {
+                 console.warn(`Hugging Face model is loading (503). Trying next key or wait...`);
+                 continue; // Model đang tải, thử key tiếp theo
             }
             
-            // Đối với các lỗi khác (ví dụ: lỗi server 5xx từ Stability), chúng ta dừng lại và báo lỗi
-            const errorText = await response.text();
-            throw new Error(`Non-recoverable response from Stability AI: ${response.status} - ${errorText}`);
+            const errorResult = await response.json();
+            throw new Error(`Non-recoverable response from Hugging Face: ${response.status} - ${errorResult.error}`);
 
         } catch (error) {
-            // Bắt các lỗi mạng hoặc lỗi được ném ra ở trên
-            console.error(`Error with API key ...${apiKey.slice(-4)}:`, error.message);
-            // Nếu đây là key cuối cùng, vòng lặp sẽ kết thúc và lỗi cuối cùng sẽ được trả về bên dưới.
+            console.error(`Error with Hugging Face API key ...${apiKey.slice(-4)}:`, error.message);
         }
     }
 
     // Nếu vòng lặp kết thúc mà không có key nào thành công
-    console.error('All API keys failed.');
-    res.status(500).json({ error: 'Failed to generate image. All available API keys failed.' });
+    console.error('All Hugging Face API keys failed.');
+    res.status(500).json({ error: 'Failed to generate image. All available Hugging Face API keys failed.' });
 });
 
 // Khởi động server
