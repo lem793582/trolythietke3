@@ -39,7 +39,9 @@ app.post('/api/generate-image', async (req, res) => {
     // Tách chuỗi thành một mảng các key và loại bỏ khoảng trắng thừa
     const apiKeys = apiKeysString.split(',').map(key => key.trim());
 
-    const engineId = 'stable-diffusion-v1-6';
+    // --- THAY ĐỔI MODEL TẠI ĐÂY ---
+    // Đã chuyển từ 'stable-diffusion-v1-6' sang model SDXL 1.0 theo yêu cầu.
+    const engineId = 'stable-diffusion-xl-base-1.0';
     const apiHost = 'https://api.stability.ai';
 
     // Vòng lặp để thử từng key
@@ -60,6 +62,7 @@ app.post('/api/generate-image', async (req, res) => {
                     width: 1024,
                     steps: 30,
                     samples: 1,
+                    // style_preset: "anime" // Bạn có thể thêm các tham số cho model XL tại đây nếu cần
                 }),
             });
 
