@@ -2,475 +2,932 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRỢ LÝ THIẾT KẾ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Trợ Lý Thiết Kế Pháp Môn Tâm Linh</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- KHO FONT CHỮ MỚI ĐƯỢC CẬP NHẬT THEO YÊU CẦU -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&family=Be+Vietnam+Pro:wght@700&family=Playfair+Display:wght@900&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Be Vietnam Pro', sans-serif; }
-        .loader { border: 5px solid #f3f3f3; border-top: 5px solid #4f46e5; border-radius: 50%; width: 60px; height: 60px; animation: spin 1.5s linear infinite; }
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Be+Vietnam+Pro:wght@400;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Lobster&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Great+Vibes&display=swap" rel="stylesheet">
+	<link rel="manifest" href="manifest.json">
+	<style>
+        :root {
+            --mau-nen: #FDF8E1;
+            --mau-chu-dam: #422006;
+            --mau-nau-dam: #8C5A2B;
+            --mau-vang-cam: #D97706;
+        }
+        html, body {
+            overscroll-behavior: none;
+            height: 100%;
+            overflow: hidden;
+        }
+        body { 
+            font-family: 'Be Vietnam Pro', sans-serif; 
+            background-color: var(--mau-nen);
+            color: var(--mau-chu-dam);
+        }
+        .font-display { font-family: 'Playfair Display', serif; }
+        
+        .control-panel-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .choice-selector input:checked + label,
+        .layout-selector input:checked + label {
+            border-color: var(--mau-vang-cam);
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.4);
+            background-color: #FFFBEB;
+        }
+       
+        .layout-preview-box {
+            aspect-ratio: 1 / 1;
+            border: 2px dashed #D1C4A8;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .layout-preview-box > div {
+            background-color: #D1C4A8; border-radius: 4px; color: white;
+            font-size: 0.6rem; padding: 2px 4px; text-align: center;
+        }
+        .layout-preview-box .logo-placeholder { background-color: #A5B4FC; width: 20%; padding: 4px 0; }
+        .layout-preview-box .note-placeholder { background-color: #F87171; width: 40%; }
+        .layout-preview-box .text-placeholder { background-color: #60A5FA; width: 80%; padding: 8px 0; }
+
+        #mobile-toolbar button.active { color: var(--mau-vang-cam); background-color: #FFFBEB; }
+        
+        .loader { 
+            border: 5px solid #D1C4A8; border-top: 5px solid #8C5A2B;
+            border-radius: 50%; width: 50px; height: 50px; 
+            animation: spin 1.5s linear infinite; 
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        /* Styling cho các lựa chọn được check */
-        .choice-selector input:checked + label {
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.4);
+
+        /* Custom Toggle Switch */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: var(--mau-vang-cam);
         }
-        .color-swatch {
-            width: 1.75rem;
-            height: 1.75rem;
-            border-radius: 9999px;
-            border: 2px solid rgba(0,0,0,0.2);
-            transition: transform 0.2s;
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: var(--mau-vang-cam);
         }
-        .choice-selector input:checked + label .color-swatch {
-            transform: scale(1.2);
-        }
-        .modal {
-            transition: opacity 0.25s ease;
-        }
+
     </style>
 </head>
-<body class="bg-[#fffbbe]">
+<body>
 
-    <main class="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-8 space-y-8 my-8">
-        <header class="text-center">
-            <h1 class="text-3xl md:text-4xl font-bold text-indigo-600" style="font-family: 'Playfair Display', serif;">TRỢ LÝ THIẾT KẾ 3</h1>
-            <p class="text-gray-500 mt-2">Hỗ trợ các Sư Huynh Hoằng Pháp Lợi Sanh.</p>
-        </header>
-
-        <!-- 1. Tùy chỉnh -->
-        <section>
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Bước 1: Tùy Chỉnh Phong Cách</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                <!-- Cột trái: Văn bản chính -->
-                <div class="space-y-6 p-4 border border-gray-200 rounded-lg">
-                    <h3 class="text-lg font-semibold text-gray-700 mb-3 text-center">Văn Bản Chính</h3>
-                    <div>
-                        <label class="font-semibold text-sm">Font chữ</label>
-                        <div class="grid grid-cols-2 gap-2 choice-selector mt-2" id="main-font-selector"></div>
-                    </div>
-                    <div>
-                        <label class="font-semibold text-sm">Kiểu Hiển Thị & Màu Sắc</label>
-                        <div class="flex flex-col space-y-2 choice-selector mt-2" id="main-style-selector"></div>
-                        <div class="grid grid-cols-4 gap-3 choice-selector mt-3" id="main-color-selector"></div>
-                    </div>
-                    <div>
-                        <label class="font-semibold text-sm">Vị trí</label>
-                        <div class="flex flex-col space-y-2 choice-selector mt-2" id="main-position-selector"></div>
-                    </div>
-                    <div>
-                        <label class="font-semibold text-sm">Kích thước</label>
-                        <div class="grid grid-cols-3 gap-2 choice-selector mt-2" id="size-selector"></div>
-                    </div>
-                </div>
-                <!-- Cột phải: Ghi chú -->
-                <div class="space-y-6 p-4 border border-gray-200 rounded-lg">
-                    <h3 class="text-lg font-semibold text-gray-700 mb-3 text-center">Ghi Chú</h3>
-                     <div>
-                        <label class="font-semibold text-sm">Font chữ</label>
-                        <div class="grid grid-cols-2 gap-2 choice-selector mt-2" id="note-font-selector"></div>
-                    </div>
-                    <div>
-                        <label class="font-semibold text-sm">Kiểu Hiển Thị & Màu Sắc</label>
-                        <div class="flex flex-col space-y-2 choice-selector mt-2" id="note-style-selector"></div>
-                        <div class="grid grid-cols-4 gap-3 choice-selector mt-3" id="note-color-selector"></div>
-                    </div>
-                     <div>
-                        <label class="font-semibold text-sm">Vị trí</label>
-                        <div class="grid grid-cols-2 gap-2 choice-selector mt-2" id="note-position-selector"></div>
-                    </div>
-                </div>
+    <div class="hidden lg:flex h-screen">
+        <div class="w-2/3 bg-gray-200 flex items-center justify-center p-8 relative">
+            <div id="canvas-container" class="w-full max-w-2xl mx-auto bg-white rounded-xl shadow-2xl">
+                <canvas id="resultCanvas" class="w-full h-auto rounded-lg"></canvas>
             </div>
-        </section>
-
-        <!-- 2. Nhập Nội Dung -->
-        <section>
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Bước 2: Nhập Nội Dung muốn chèn lên ảnh</h2>
-            <div class="space-y-4">
-                <div>
-                    <label for="text1" class="block text-sm font-medium text-gray-700">Nội dung chính</label>
-                    <textarea id="text1" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="Đây là phần nội dung Sư Huynh muốn trợ lý chèn lên hình ảnh..."></textarea>
-                </div>
-                <div>
-                    <label for="text3" class="block text-sm font-medium text-gray-700">Ghi chú (Nguồn, ngày tháng...)</label>
-                    <input type="text" id="text3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="Nguồn bài viết, ví dụ : Wenda...">
-                </div>
+            <div id="loading-overlay" class="absolute inset-0 bg-black bg-opacity-50 flex-col items-center justify-center z-20 hidden">
+                <div class="loader"></div>
+                <p class="text-white font-semibold mt-4">Đang xử lý, vui lòng chờ...</p>
             </div>
-        </section>
-
-        <!-- 3. Tạo ảnh -->
-        <button id="generateBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg text-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-indigo-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-wait" disabled>
-            <span id="btn-text">Đang tải Font chữ...</span>
-        </button>
-    </main>
-
-    <!-- Loading Modal -->
-    <div id="loading-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none">
-        <div class="bg-white rounded-lg p-8 text-center space-y-4">
-            <div class="loader mx-auto"></div>
-            <p class="text-indigo-600 font-semibold text-lg">Đang tạo ảnh cho Sư Huynh...</p>
+        </div>
+        <div class="w-1/3 bg-white border-l-4 border-yellow-100 flex flex-col">
+            <div id="desktop-controls-panel" class="flex-grow p-8 space-y-6 overflow-y-auto">
+                <header class="text-center mb-6">
+                    <h1 class="text-3xl md:text-4xl font-bold text-amber-800 font-display">Trợ Lý Thiết Kế</h1>
+                    <p class="text-amber-600 mt-1">PHÁP MÔN TÂM LINH</p>
+                </header>
+                <div id="desktop-controls-content" class="space-y-6"></div>
+            </div>
+             <a id="downloadBtn" href="#" download="thiep-anh-phat-giao.png" class="flex-shrink-0 m-8 w-auto text-center bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-4 px-4 rounded-lg transition shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                Tải Về Hình Ảnh
+            </a>
         </div>
     </div>
 
-    <!-- Result Modal -->
-    <div id="result-modal" class="modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none">
-        <div class="bg-white rounded-lg p-6 space-y-4 w-full max-w-lg">
-            <h3 class="text-2xl font-bold text-center text-indigo-600">Tác phẩm đã hoàn thành!</h3>
-            <canvas id="resultCanvas" class="w-full h-auto rounded-lg shadow-md"></canvas>
-            <div class="flex flex-col sm:flex-row gap-4">
-                <a id="downloadBtn" href="#" download="thiep-anh.png" class="flex-1 text-center bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition">Tải Về</a>
-                <button id="closeBtn" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-4 rounded-lg transition">Đóng</button>
+    <div id="mobile-app" class="lg:hidden flex flex-col fixed inset-0">
+        <div id="mobile-image-panel" class="w-full aspect-square flex items-center justify-center p-2 bg-gray-200 flex-shrink-0">
+            <div id="mobile-canvas-container" class="w-full h-full bg-white rounded-xl shadow-lg">
+                </div>
+        </div>
+
+        <div id="mobile-controls-host" class="flex-grow overflow-hidden relative bg-amber-50 border-t-2 border-amber-200">
+            <div id="mobile-image-gen-panel" class="mobile-panel-instance h-full overflow-y-auto p-4"></div>
+            <div id="mobile-layout-panel" class="mobile-panel-instance h-full overflow-y-auto p-4 hidden"></div>
+            <div id="mobile-text-panel" class="mobile-panel-instance h-full overflow-y-auto p-4 hidden"></div>
+            <div id="mobile-style-panel" class="mobile-panel-instance h-full overflow-y-auto p-4 hidden"></div>
+        </div>
+
+        <div id="mobile-toolbar" class="flex-shrink-0 bg-white h-20 border-t shadow-lg flex justify-around items-center z-50">
+             <button data-panel="mobile-image-gen-panel" class="mobile-tool-btn flex flex-col items-center justify-center text-gray-600 p-2 rounded-lg w-1/5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <span class="text-xs mt-1">Ảnh Nền</span>
+            </button>
+            <button data-panel="mobile-layout-panel" class="mobile-tool-btn flex flex-col items-center justify-center text-gray-600 p-2 rounded-lg w-1/5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6z" /></svg>
+                <span class="text-xs mt-1">Bố Cục</span>
+            </button>
+            <button data-panel="mobile-text-panel" class="mobile-tool-btn flex flex-col items-center justify-center text-gray-600 p-2 rounded-lg w-1/5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                <span class="text-xs mt-1">Nội Dung</span>
+            </button>
+            <button data-panel="mobile-style-panel" class="mobile-tool-btn flex flex-col items-center justify-center text-gray-600 p-2 rounded-lg w-1/5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
+                <span class="text-xs mt-1">Kiểu Chữ</span>
+            </button>
+            <button id="mobile-download-btn" class="flex flex-col items-center justify-center text-gray-600 p-2 rounded-lg w-1/5 bg-green-100 text-green-800">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                <span class="text-xs mt-1">Tải Về</span>
+            </button>
+        </div>
+    </div>
+    
+    <div id="templates" class="hidden">
+        <div id="template-image-gen-controls" class="control-panel-section bg-green-50">
+            <h2 class="text-xl font-bold text-amber-900 mb-3">Bước 1: Chọn Ảnh Nền</h2>
+            <div class="space-y-4">
+                <input type="file" class="image-upload-input hidden" accept="image/*">
+                <button data-action="upload-image" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-md flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    Tải Ảnh Của Bạn Lên (1:1)
+                </button>
+                <p class="text-sm text-amber-700 text-center">- hoặc -</p>
+                <button data-action="generate-image" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-md flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M5.523 13.523a8 8 0 0111.954-2.553M20 20v-5h-5M18.477 10.477a8 8 0 01-11.954 2.553" /></svg>
+                    Tạo Ảnh Nền Ngẫu Nhiên
+                </button>
+            </div>
+        </div>
+        <div id="template-layout-controls" class="control-panel-section bg-amber-50">
+            <h2 class="text-xl font-bold text-amber-900 mb-3">Bước 2: Bố Cục & Logo</h2>
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-amber-900">Chọn Mẫu Bố Cục</h3>
+                <div class="grid grid-cols-3 gap-3 layout-selector"></div>
+                <div class="mt-4 pt-4 border-t space-y-3">
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-medium text-amber-800">Hiển thị Logo</label>
+                        <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" data-input="logo-visible" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                            <label class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                        </div>
+                    </div>
+                    <div data-container="logo-size" class="hidden">
+                        <label class="block text-sm font-medium text-amber-800">Kích thước Logo: <span data-value-for="logo-size">15</span>%</label>
+                        <input type="range" data-input="logo-size" min="5" max="40" value="15" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="template-text-controls" class="control-panel-section bg-amber-50">
+            <h2 class="text-xl font-bold text-amber-900 mb-3">Bước 3: Nhập Nội Dung</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-amber-800">Nội dung chính</label>
+                    <textarea data-input="main-text" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-amber-800">Ghi chú (Nguồn, ngày tháng...)</label>
+                    <input type="text" data-input="note-text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500">
+                </div>
+            </div>
+        </div>
+        <div id="template-style-controls" class="control-panel-section bg-amber-50">
+            <h2 class="text-xl font-bold text-amber-900 mb-3">Bước 4: Tùy Chỉnh Font</h2>
+            <div class="space-y-4">
+                 <details class="bg-amber-50 rounded-lg border border-amber-200 p-4 transition" open>
+                    <summary class="flex justify-between items-center font-semibold text-amber-900 cursor-pointer">Văn Bản Chính</summary>
+                    <div class="mt-4 space-y-5">
+                        <details class="bg-white rounded-lg border border-amber-200 p-3 transition" open>
+                             <summary class="flex justify-between items-center font-semibold text-sm text-amber-900 cursor-pointer">Kiểu Chữ & Màu Sắc</summary>
+                             <div class="mt-3 space-y-4">
+                                <div>
+                                    <label class="font-semibold text-xs text-amber-800">Font chữ</label>
+                                    <div class="grid grid-cols-2 gap-2 choice-selector main-font-selector"></div>
+                                </div>
+                                <div>
+                                    <label class="font-semibold text-xs text-amber-800">Màu Sắc</label>
+                                    <div class="grid grid-cols-5 gap-2 choice-selector main-color-selector"></div>
+                                </div>
+                                <div>
+                                     <label class="font-semibold text-xs text-amber-800">Kích thước chữ: <span data-value-for="main-font-size">50</span></label>
+                                     <input type="range" data-input="main-font-size" min="10" max="120" value="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                </div>
+                             </div>
+                        </details>
+                        <details class="bg-white rounded-lg border border-amber-200 p-3 transition">
+                            <summary class="flex justify-between items-center font-semibold text-sm text-amber-900 cursor-pointer">Nền Văn Bản</summary>
+                            <div class="mt-3 space-y-4">
+                               <div class="flex items-center justify-between">
+                                    <label class="font-semibold text-xs text-amber-800">Bật/Tắt Nền</label>
+                                    <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                                        <input type="checkbox" data-input="main-bg-visible" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                        <label class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                                    </div>
+                                </div>
+                                <div data-container="main-bg-controls" class="space-y-4 hidden">
+                                    <div>
+                                        <label class="font-semibold text-xs text-amber-800">Màu Nền</label>
+                                        <div class="grid grid-cols-5 gap-2 choice-selector main-bg-color-selector"></div>
+                                    </div>
+                                    <div>
+                                        <label class="font-semibold text-xs text-amber-800">Độ trong suốt: <span data-value-for="main-bg-opacity">0.4</span></label>
+                                        <input type="range" data-input="main-bg-opacity" min="0" max="1" step="0.1" value="0.4" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                        <details class="bg-white rounded-lg border border-amber-200 p-3 transition">
+                            <summary class="flex justify-between items-center font-semibold text-sm text-amber-900 cursor-pointer">Viền Chữ</summary>
+                             <div class="mt-3 space-y-4">
+                                 <div class="flex items-center justify-between">
+                                    <label class="font-semibold text-xs text-amber-800">Bật/Tắt Viền</label>
+                                    <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                                        <input type="checkbox" data-input="main-stroke-visible" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                        <label class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                                    </div>
+                                </div>
+                                <div data-container="main-stroke-controls" class="space-y-4 hidden">
+                                    <div>
+                                        <label class="font-semibold text-xs text-amber-800">Màu Viền</label>
+                                        <div class="grid grid-cols-5 gap-2 choice-selector main-stroke-color-selector"></div>
+                                    </div>
+                                    <div>
+                                        <label class="font-semibold text-xs text-amber-800">Độ dày viền: <span data-value-for="main-stroke-width">2</span></label>
+                                        <input type="range" data-input="main-stroke-width" min="0" max="20" step="1" value="2" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                        <details class="bg-white rounded-lg border border-amber-200 p-3 transition">
+                            <summary class="flex justify-between items-center font-semibold text-sm text-amber-900 cursor-pointer">Đổ Bóng</summary>
+                             <div class="mt-3 space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <label class="font-semibold text-xs text-amber-800">Bật/Tắt Bóng</label>
+                                    <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                                        <input type="checkbox" data-input="main-shadow-visible" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                        <label class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                                    </div>
+                                </div>
+                                <div data-container="main-shadow-controls" class="space-y-4 hidden">
+                                     <div>
+                                        <label class="font-semibold text-xs text-amber-800">Màu Bóng</label>
+                                        <div class="grid grid-cols-5 gap-2 choice-selector main-shadow-color-selector"></div>
+                                    </div>
+                                    <div>
+                                        <label class="font-semibold text-xs text-amber-800">Độ mờ: <span data-value-for="main-shadow-blur">5</span></label>
+                                        <input type="range" data-input="main-shadow-blur" min="0" max="50" step="1" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    </div>
+                                    <div>
+                                        <label class="font-semibold text-xs text-amber-800">Vị trí X: <span data-value-for="main-shadow-offsetX">5</span></label>
+                                        <input type="range" data-input="main-shadow-offsetX" min="-50" max="50" step="1" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    </div>
+                                    <div>
+                                        <label class="font-semibold text-xs text-amber-800">Vị trí Y: <span data-value-for="main-shadow-offsetY">5</span></label>
+                                        <input type="range" data-input="main-shadow-offsetY" min="-50" max="50" step="1" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </details>
+                <details class="bg-amber-50 rounded-lg border border-amber-200 p-4 transition" open>
+                    <summary class="flex justify-between items-center font-semibold text-amber-900 cursor-pointer">Ghi Chú</summary>
+                     <div class="mt-4 space-y-5">
+                        <details class="bg-white rounded-lg border border-amber-200 p-3 transition" open>
+                             <summary class="flex justify-between items-center font-semibold text-sm text-amber-900 cursor-pointer">Kiểu Chữ & Màu Sắc</summary>
+                             <div class="mt-3 space-y-4">
+                                <div>
+                                    <label class="font-semibold text-xs text-amber-800">Font chữ</label>
+                                    <div class="grid grid-cols-2 gap-2 choice-selector note-font-selector"></div>
+                                </div>
+                                <div>
+                                    <label class="font-semibold text-xs text-amber-800">Màu Sắc</label>
+                                    <div class="grid grid-cols-5 gap-2 choice-selector note-color-selector"></div>
+                                </div>
+                                <div>
+                                     <label class="font-semibold text-xs text-amber-800">Kích thước chữ: <span data-value-for="note-font-size">20</span></label>
+                                     <input type="range" data-input="note-font-size" min="10" max="60" value="20" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                </div>
+                             </div>
+                        </details>
+                         <details class="bg-white rounded-lg border border-amber-200 p-3 transition">
+                            <summary class="flex justify-between items-center font-semibold text-sm text-amber-900 cursor-pointer">Nền Văn Bản</summary>
+                            <div class="mt-3 space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <label class="font-semibold text-xs text-amber-800">Bật/Tắt Nền</label>
+                                    <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                                        <input type="checkbox" data-input="note-bg-visible" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                        <label class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                                    </div>
+                                </div>
+                                <div data-container="note-bg-controls" class="space-y-4 hidden">
+                                    <div>
+                                        <label class="font-semibold text-xs text-amber-800">Màu Nền</label>
+                                        <div class="grid grid-cols-5 gap-2 choice-selector note-bg-color-selector"></div>
+                                    </div>
+                                    <div>
+                                        <label class="font-semibold text-xs text-amber-800">Độ trong suốt: <span data-value-for="note-bg-opacity">0.4</span></label>
+                                        <input type="range" data-input="note-bg-opacity" min="0" max="1" step="0.1" value="0.4" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    </div>
+                                </div>
+                             </div>
+                        </details>
+                        <details class="bg-white rounded-lg border border-amber-200 p-3 transition">
+                            <summary class="flex justify-between items-center font-semibold text-sm text-amber-900 cursor-pointer">Viền Chữ</summary>
+                             <div class="mt-3 space-y-4">
+                                 <div class="flex items-center justify-between">
+                                    <label class="font-semibold text-xs text-amber-800">Bật/Tắt Viền</label>
+                                    <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                                        <input type="checkbox" data-input="note-stroke-visible" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                        <label class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                                    </div>
+                                </div>
+                                <div data-container="note-stroke-controls" class="space-y-4 hidden">
+                                    <div>
+                                        <label class="font-semibold text-xs text-amber-800">Màu Viền</label>
+                                        <div class="grid grid-cols-5 gap-2 choice-selector note-stroke-color-selector"></div>
+                                    </div>
+                                    <div>
+                                        <label class="font-semibold text-xs text-amber-800">Độ dày viền: <span data-value-for="note-stroke-width">1</span></label>
+                                        <input type="range" data-input="note-stroke-width" min="0" max="10" step="1" value="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                        <details class="bg-white rounded-lg border border-amber-200 p-3 transition">
+                            <summary class="flex justify-between items-center font-semibold text-sm text-amber-900 cursor-pointer">Đổ Bóng</summary>
+                             <div class="mt-3 space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <label class="font-semibold text-xs text-amber-800">Bật/Tắt Bóng</label>
+                                    <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                                        <input type="checkbox" data-input="note-shadow-visible" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                        <label class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                                    </div>
+                                </div>
+                                <div data-container="note-shadow-controls" class="space-y-4 hidden">
+                                     <div>
+                                        <label class="font-semibold text-xs text-amber-800">Màu Bóng</label>
+                                        <div class="grid grid-cols-5 gap-2 choice-selector note-shadow-color-selector"></div>
+                                    </div>
+                                    <div>
+                                        <label class="font-semibold text-xs text-amber-800">Độ mờ: <span data-value-for="note-shadow-blur">3</span></label>
+                                        <input type="range" data-input="note-shadow-blur" min="0" max="30" step="1" value="3" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    </div>
+                                    <div>
+                                        <label class="font-semibold text-xs text-amber-800">Vị trí X: <span data-value-for="note-shadow-offsetX">3</span></label>
+                                        <input type="range" data-input="note-shadow-offsetX" min="-30" max="30" step="1" value="3" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    </div>
+                                    <div>
+                                        <label class="font-semibold text-xs text-amber-800">Vị trí Y: <span data-value-for="note-shadow-offsetY">3</span></label>
+                                        <input type="range" data-input="note-shadow-offsetY" min="-30" max="30" step="1" value="3" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                     </div>
+                </details>
             </div>
         </div>
     </div>
 
     <script type="module">
-        // --- CÁC PHẦN TỬ DOM ---
-        const generateBtn = document.getElementById('generateBtn');
-        const btnText = document.getElementById('btn-text');
-        const mainFontSelectorContainer = document.getElementById('main-font-selector');
-        const noteFontSelectorContainer = document.getElementById('note-font-selector');
-        const mainStyleSelectorContainer = document.getElementById('main-style-selector');
-        const noteStyleSelectorContainer = document.getElementById('note-style-selector');
-        const sizeSelectorContainer = document.getElementById('size-selector');
-        const mainPositionSelectorContainer = document.getElementById('main-position-selector');
-        const notePositionSelectorContainer = document.getElementById('note-position-selector');
-        const mainColorSelectorContainer = document.getElementById('main-color-selector');
-        const noteColorSelectorContainer = document.getElementById('note-color-selector');
-        const textInputs = { text1: document.getElementById('text1'), text3: document.getElementById('text3') };
-        
-        const loadingModal = document.getElementById('loading-modal');
-        const resultModal = document.getElementById('result-modal');
-        const closeBtn = document.getElementById('closeBtn');
-        const canvas = document.getElementById('resultCanvas');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const ctx = canvas.getContext('2d');
+        // --- STATE & CONFIGURATION ---
+        const state = {
+            mainText: "",
+            noteText: "",
+            layout: 'layout1',
+            main: { 
+                font: 'Playfair Display', 
+                color: '#FFFFFF', 
+                fontSize: 50,
+                background: { visible: false, color: '#000000', opacity: 0.4 },
+                stroke: { visible: false, color: '#000000', width: 2 },
+                shadow: { visible: false, color: 'rgba(0,0,0,0.75)', blur: 5, offsetX: 5, offsetY: 5 }
+            },
+            note: { 
+                font: 'Roboto', 
+                color: '#FFFFFF', 
+                fontSize: 20,
+                background: { visible: false, color: '#000000', opacity: 0.4 },
+                stroke: { visible: false, color: '#000000', width: 1 },
+                shadow: { visible: false, color: 'rgba(0,0,0,0.75)', blur: 3, offsetX: 3, offsetY: 3 }
+            },
+            logo: { size: 15, visible: false }
+        };
 
-        // --- ĐỊNH NGHĨA CÁC BỘ FONT, MÀU, VỊ TRÍ, KÍCH THƯỚC ---
-        const fontProfiles = [
-            { id: 'font1', name: 'Roboto', main: "'Roboto', sans-serif" },
-            { id: 'font2', name: 'Be Vietnam Pro', main: "'Be Vietnam Pro', sans-serif" },
-            { id: 'font3', name: 'Playfair Display', main: "'Playfair Display', serif" },
-            { id: 'font4', name: 'Times New Roman', main: "'Times New Roman', serif" },
-            { id: 'font5', name: 'Arial', main: "Arial, sans-serif" },
-        ];
-        const styleProfiles = [
-            { id: 'styleBox', name: 'Hộp Nền Tối', method: 'drawTextBox', boxColor: 'rgba(40, 26, 1, 0.8)' },
-            { id: 'styleGlow', name: 'Chữ Nổi Bật', method: 'drawGlowedText' },
-        ];
-        const boxTextColors = [
-            { name: 'Trắng', value: '#FFFFFF' }, { name: 'Vàng Nhạt', value: '#FEFCE8' },
-            { name: 'Hồng Sáng', value: '#FCE7F3' }, { name: 'Xanh Sáng', value: '#ECFEFF' },
-        ];
-        const glowTextColors = [
-            { name: 'Trắng', value: '#FFFFFF', outline: '#000000' }, { name: 'Đen', value: '#111827', outline: '#F3F4F6' },
-            { name: 'Vàng Kim', value: '#FBBF24', outline: '#422006' }, { name: 'Hồng Phấn', value: '#FBCFE8', outline: '#831843' },
-            { name: 'Xanh Trời', value: '#A5F3FC', outline: '#0E7490' }, { name: 'Xanh Lá', value: '#BEF264', outline: '#365314' },
-            { name: 'Tím', value: '#D8B4FE', outline: '#581C87' }, { name: 'Cam', value: '#FDBA74', outline: '#7C2D12' },
-        ];
-        const mainPositionProfiles = [
-            { id: 'posTop', name: 'Ở Trên', value: 'top' },
-            { id: 'posCenter', name: 'Ở Giữa', value: 'center' },
-            { id: 'posBottom', name: 'Ở Dưới', value: 'bottom' },
-        ];
-        const notePositionProfiles = [
-            { id: 'noteTopLeft', name: 'Trên Trái', value: 'topLeft' },
-            { id: 'noteTopRight', name: 'Trên Phải', value: 'topRight' },
-            { id: 'noteBottomLeft', name: 'Dưới Trái', value: 'bottomLeft' },
-            { id: 'noteBottomRight', name: 'Dưới Phải', value: 'bottomRight' },
-        ];
-        const sizeProfiles = [
-            { id: 'size30', name: '30px', value: 30 }, { id: 'size40', name: '40px', value: 40 },
-            { id: 'size50', name: '50px', value: 50 }, { id: 'size60', name: '60px', value: 60 },
-            { id: 'size70', name: '70px', value: 70 },
-        ];
+        const layouts = {
+            layout1: { name: 'Cổ Điển', main: { v: 'top', h: 'center' }, logo: { v: 'bottom', h: 'left' }, note: { v: 'bottom', h: 'right' } },
+            layout2: { name: 'Hiện Đại', main: { v: 'center', h: 'center' }, logo: { v: 'top', h: 'left' }, note: { v: 'bottom', h: 'right' } },
+            layout3: { name: 'Phá Cách', main: { v: 'bottom', h: 'center' }, logo: { v: 'top', h: 'right' }, note: { v: 'top', h: 'left' } }
+        };
+
+	    const fontProfiles = [ 'Roboto', 'Be Vietnam Pro', 'Playfair Display', 'Times New Roman', 'Arial', 'Dancing Script', 'Pacifico', 'Lobster', 'Alex Brush', 'Great Vibes' ];
+        const colorProfiles = [ '#FFFFFF', '#000000', '#422006', '#FFFBEB', '#FBBF24', '#F59E0B', '#9A3412', '#D1C4A8', '#FEF3C7', '#1C1917', '#57534E' ];
+
+        // --- DOM ELEMENTS ---
+        const canvas = document.getElementById('resultCanvas');
+        const ctx = canvas.getContext('2d');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const loadingOverlay = document.getElementById('loading-overlay');
         
-        // --- KHỞI TẠO GIAO DIỆN & TẢI FONT ---
-        async function loadFonts() {
-            const fontChecks = fontProfiles.map(p => document.fonts.load(`700 12px ${p.main}`));
-            try {
-                await Promise.all(fontChecks);
-                console.log("Tất cả font đã được tải thành công!");
-                generateBtn.disabled = false;
-                btnText.textContent = "TẠO HÌNH ẢNH";
-            } catch (err) {
-                console.error("Lỗi khi tải font:", err);
-                btnText.textContent = "Lỗi tải font, vui lòng làm mới";
+        const logoImage = new Image();
+        const backgroundImage = new Image();
+        let isLogoLoaded = false;
+        let areFontsLoaded = false;
+
+        // --- INITIALIZATION ---
+        function init() {
+            setupLayout();
+            cloneControls();
+            generateUIComponents();
+            setupEventListeners();
+            loadInitialAssets().then(() => {
+                updateAllInputs();
+                drawInitialCanvas();
+            });
+        }
+        
+        function setupLayout() {
+            if (window.innerWidth < 1024) { 
+                const mobileCanvasContainer = document.getElementById('mobile-canvas-container');
+                mobileCanvasContainer.appendChild(canvas);
             }
         }
 
-        function initializeUI() {
-            // Font Selectors
-            const createFontSelector = (container, name, defaultIndex) => {
-                container.innerHTML = ''; // Clear previous options
-                fontProfiles.forEach((profile, index) => {
-                    container.innerHTML += `
-                        <div>
-                            <input type="radio" name="${name}" id="${name}-${profile.id}" value="${profile.id}" class="hidden" ${index === defaultIndex ? 'checked' : ''}>
-                            <label for="${name}-${profile.id}" class="block cursor-pointer border-2 border-gray-200 rounded-lg p-2 text-center transition hover:border-indigo-500 h-full">
-                                <div style="font-family: ${profile.main}; font-size: 1.2rem; line-height: 1.2;">${profile.name}</div>
-                            </label>
-                        </div>`;
-                });
+        function cloneControls() {
+            const desktopContainer = document.getElementById('desktop-controls-content');
+            const templates = {
+                'image-gen': document.getElementById('template-image-gen-controls'),
+                'layout': document.getElementById('template-layout-controls'),
+                'text': document.getElementById('template-text-controls'),
+                'style': document.getElementById('template-style-controls'),
             };
-            createFontSelector(mainFontSelectorContainer, 'main-font', 0);
-            createFontSelector(noteFontSelectorContainer, 'note-font', 3);
 
-            // Style & Color Selectors
-            const createStyleAndColorSelectors = (styleContainer, colorContainer, namePrefix, defaultIndex) => {
-                const populateColors = (styleId) => {
-                    colorContainer.innerHTML = '';
-                    const colors = styleId === 'styleBox' ? boxTextColors : glowTextColors;
-                    colors.forEach((color, index) => {
-                        colorContainer.innerHTML += `
-                            <div>
-                                <input type="radio" name="${namePrefix}-color" id="${namePrefix}-color-${index}" value='${JSON.stringify(color)}' class="hidden" ${index === 0 ? 'checked' : ''}>
-                                <label for="${namePrefix}-color-${index}" title="${color.name}" class="flex flex-col items-center cursor-pointer rounded-lg p-1 transition">
-                                    <div class="color-swatch" style="background-color: ${color.value};"></div>
+            for (const key in templates) {
+                const templateNode = templates[key];
+                desktopContainer.appendChild(templateNode.cloneNode(true));
+                document.getElementById(`mobile-${key}-panel`).appendChild(templateNode.cloneNode(true));
+            }
+        }
+
+        async function loadInitialAssets() {
+            const fontChecks = fontProfiles.map(font => document.fonts.load(`12px "${font}"`));
+            const logoPromise = new Promise(resolve => {
+                logoImage.src = 'logo.png';
+                logoImage.onload = () => { isLogoLoaded = true; resolve(); };
+                logoImage.onerror = () => { console.warn("logo.png not found."); isLogoLoaded = false; resolve(); };
+            });
+            
+            await Promise.all([...fontChecks, logoPromise]);
+            areFontsLoaded = true;
+            console.log("Fonts and logo loaded.");
+        }
+
+        function drawInitialCanvas() {
+            canvas.width = 1024;
+            canvas.height = 1024;
+            ctx.fillStyle = '#E5E7EB';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#6B7280';
+            ctx.textAlign = 'center';
+            ctx.font = '30px "Be Vietnam Pro"';
+            ctx.fillText('Tải lên hoặc Tạo ảnh nền', canvas.width / 2, canvas.height / 2);
+        }
+        
+        function setBackgroundImage(src) {
+            backgroundImage.crossOrigin = "anonymous";
+            backgroundImage.src = src;
+            backgroundImage.onload = () => {
+                canvas.width = backgroundImage.width;
+                canvas.height = backgroundImage.height;
+                redrawCanvas();
+                loadingOverlay.style.display = 'none';
+            };
+            backgroundImage.onerror = () => {
+                alert("Lỗi khi tải ảnh nền.");
+                loadingOverlay.style.display = 'none';
+            };
+        }
+
+        function generateUIComponents() {
+            const createSelector = (containerClass, items, name, type) => {
+                document.querySelectorAll(`.${containerClass}`).forEach(container => {
+                    container.innerHTML = '';
+                    let content = '';
+                    items.forEach((item, index) => {
+                        const id = `${name}-${container.closest('[id]').id}-${index}`;
+                        content += `
+                            <div class="choice-item">
+                                <input type="radio" id="${id}" name="${name}-${container.closest('[id]').id}" data-input="${name}" value="${item}" class="hidden">
+                                <label for="${id}" class="block cursor-pointer border-2 border-amber-200 rounded-lg p-2 text-center transition hover:border-yellow-500 h-full" style="${type === 'color' ? `background-color:${item}` : `font-family:'${item}'`}">
+                                    ${type === 'color' ? '&nbsp;' : item}
                                 </label>
                             </div>`;
                     });
-                };
-
-                styleContainer.addEventListener('change', (e) => {
-                    if (e.target.name === `${namePrefix}-style`) {
-                        populateColors(e.target.value);
-                    }
+                    container.innerHTML = content;
                 });
-
-                styleProfiles.forEach((style, index) => {
-                    styleContainer.innerHTML += `
+            };
+            
+            createSelector('main-font-selector', fontProfiles, 'main-font', 'font');
+            createSelector('note-font-selector', fontProfiles, 'note-font', 'font');
+            createSelector('main-color-selector', colorProfiles, 'main-color', 'color');
+            createSelector('note-color-selector', colorProfiles, 'note-color', 'color');
+            createSelector('main-bg-color-selector', colorProfiles, 'main-bg-color', 'color');
+            createSelector('note-bg-color-selector', colorProfiles, 'note-bg-color', 'color');
+            createSelector('main-stroke-color-selector', colorProfiles, 'main-stroke-color', 'color');
+            createSelector('note-stroke-color-selector', colorProfiles, 'note-stroke-color', 'color');
+            createSelector('main-shadow-color-selector', colorProfiles, 'main-shadow-color', 'color');
+            createSelector('note-shadow-color-selector', colorProfiles, 'note-shadow-color', 'color');
+            
+            document.querySelectorAll('.layout-selector').forEach(container => {
+                container.innerHTML = '';
+                Object.keys(layouts).forEach((key, index) => {
+                    const layout = layouts[key];
+                    const id = `layout-${container.closest('[id]').id}-${index}`;
+                    container.innerHTML += `
                         <div>
-                            <input type="radio" name="${namePrefix}-style" id="${namePrefix}-${style.id}" value="${style.id}" class="hidden" ${index === defaultIndex ? 'checked' : ''}>
-                            <label for="${namePrefix}-${style.id}" class="block cursor-pointer border-2 border-gray-200 rounded-lg p-2 text-center transition hover:border-indigo-500 font-medium">${style.name}</label>
+                            <input type="radio" id="${id}" name="layout-${container.closest('[id]').id}" data-input="layout" value="${key}" class="hidden">
+                            <label for="${id}" class="block cursor-pointer border-2 border-transparent rounded-lg p-2 text-center transition hover:border-yellow-500">
+                                <div class="layout-preview-box">${generateLayoutPreview(layout)}</div>
+                                <span class="text-sm font-semibold mt-2 block">${layout.name}</span>
+                            </label>
                         </div>`;
                 });
-                populateColors(styleProfiles[defaultIndex].id);
-            };
-            
-            createStyleAndColorSelectors(mainStyleSelectorContainer, mainColorSelectorContainer, 'main', 0);
-            createStyleAndColorSelectors(noteStyleSelectorContainer, noteColorSelectorContainer, 'note', 1);
-
-            // Size Selector
-            sizeProfiles.forEach((size, index) => {
-                sizeSelectorContainer.innerHTML += `
-                    <div>
-                        <input type="radio" name="size" id="${size.id}" value="${size.value}" class="hidden" ${index === 2 ? 'checked' : ''}>
-                        <label for="${size.id}" class="block cursor-pointer border-2 border-gray-200 rounded-lg p-2 text-center transition hover:border-indigo-500 font-medium">${size.name}</label>
-                    </div>`;
             });
-            // Main Position Selector
-            mainPositionProfiles.forEach((pos, index) => {
-                mainPositionSelectorContainer.innerHTML += `
-                    <div>
-                        <input type="radio" name="main_position" id="${pos.id}" value="${pos.value}" class="hidden" ${index === 1 ? 'checked' : ''}>
-                        <label for="${pos.id}" class="block cursor-pointer border-2 border-gray-200 rounded-lg p-2 text-center transition hover:border-indigo-500 font-medium">${pos.name}</label>
-                    </div>`;
-            });
-            // Note Position Selector
-            notePositionProfiles.forEach((pos, index) => {
-                notePositionSelectorContainer.innerHTML += `
-                    <div>
-                        <input type="radio" name="note_position" id="${pos.id}" value="${pos.value}" class="hidden" ${index === 0 ? 'checked' : ''}>
-                        <label for="${pos.id}" class="block cursor-pointer border-2 border-gray-200 rounded-lg p-2 text-center transition hover:border-indigo-500 font-medium">${pos.name}</label>
-                    </div>`;
-            });
-            
-            loadFonts();
         }
 
-        initializeUI();
+        function generateLayoutPreview(layout) {
+            const positions = { top: '', center: '', bottom: ''};
+            const addElement = (type) => `<div class="${type}-placeholder">${type.charAt(0).toUpperCase()}</div>`;
+            positions[layout.main.v] += addElement('text');
+            positions[layout.logo.v] += addElement('logo');
+            positions[layout.note.v] += addElement('note');
+            return `<div class="flex justify-around w-full">${positions.top}</div><div class="flex justify-around w-full">${positions.center}</div><div class="flex justify-around w-full">${positions.bottom}</div>`;
+        }
+        
+        function updateAllInputs() {
+            document.querySelectorAll('[data-input="main-text"]').forEach(el => el.value = state.mainText);
+            document.querySelectorAll('[data-input="note-text"]').forEach(el => el.value = state.noteText);
+            document.querySelectorAll('input[data-input="layout"]').forEach(el => el.checked = el.value === state.layout);
+            document.querySelectorAll('input[data-input="logo-visible"]').forEach(el => el.checked = state.logo.visible);
+            document.querySelectorAll('[data-input="logo-size"]').forEach(el => el.value = state.logo.size);
+            document.querySelectorAll('[data-value-for="logo-size"]').forEach(el => el.textContent = state.logo.size);
+            document.querySelectorAll('[data-container="logo-size"]').forEach(c => c.style.display = state.logo.visible ? 'block' : 'none');
 
-        // --- HÀM CHÍNH ---
-        generateBtn.addEventListener('click', async () => {
-            const options = {
-                main: {
-                    fontId: document.querySelector('input[name="main-font"]:checked').value,
-                    styleId: document.querySelector('input[name="main-style"]:checked').value,
-                    size: parseInt(document.querySelector('input[name="size"]:checked').value, 10),
-                    position: document.querySelector('input[name="main_position"]:checked').value,
-                    color: JSON.parse(document.querySelector('input[name="main-color"]:checked').value),
-                },
-                note: {
-                    fontId: document.querySelector('input[name="note-font"]:checked').value,
-                    styleId: document.querySelector('input[name="note-style"]:checked').value,
-                    position: document.querySelector('input[name="note_position"]:checked').value,
-                    color: JSON.parse(document.querySelector('input[name="note-color"]:checked').value),
+            const updateStyleInputs = (type) => {
+                const s = state[type];
+                document.querySelectorAll(`input[data-input="${type}-font"]`).forEach(el => el.checked = el.value === s.font);
+                document.querySelectorAll(`input[data-input="${type}-color"]`).forEach(el => el.checked = el.value === s.color);
+                document.querySelectorAll(`[data-input="${type}-font-size"]`).forEach(el => el.value = s.fontSize);
+                document.querySelectorAll(`[data-value-for="${type}-font-size"]`).forEach(el => el.textContent = s.fontSize);
+                
+                // Background
+                document.querySelectorAll(`input[data-input="${type}-bg-visible"]`).forEach(el => el.checked = s.background.visible);
+                document.querySelectorAll(`[data-container="${type}-bg-controls"]`).forEach(c => c.style.display = s.background.visible ? 'block' : 'none');
+                document.querySelectorAll(`input[data-input="${type}-bg-color"]`).forEach(el => el.checked = el.value === s.background.color);
+                document.querySelectorAll(`[data-input="${type}-bg-opacity"]`).forEach(el => el.value = s.background.opacity);
+                document.querySelectorAll(`[data-value-for="${type}-bg-opacity"]`).forEach(el => el.textContent = s.background.opacity);
+                
+                // Stroke
+                document.querySelectorAll(`input[data-input="${type}-stroke-visible"]`).forEach(el => el.checked = s.stroke.visible);
+                document.querySelectorAll(`[data-container="${type}-stroke-controls"]`).forEach(c => c.style.display = s.stroke.visible ? 'block' : 'none');
+                document.querySelectorAll(`input[data-input="${type}-stroke-color"]`).forEach(el => el.checked = el.value === s.stroke.color);
+                document.querySelectorAll(`[data-input="${type}-stroke-width"]`).forEach(el => el.value = s.stroke.width);
+                document.querySelectorAll(`[data-value-for="${type}-stroke-width"]`).forEach(el => el.textContent = s.stroke.width);
+
+                // Shadow
+                document.querySelectorAll(`input[data-input="${type}-shadow-visible"]`).forEach(el => el.checked = s.shadow.visible);
+                document.querySelectorAll(`[data-container="${type}-shadow-controls"]`).forEach(c => c.style.display = s.shadow.visible ? 'block' : 'none');
+                document.querySelectorAll(`input[data-input="${type}-shadow-color"]`).forEach(el => el.checked = el.value === s.shadow.color);
+                document.querySelectorAll(`[data-input="${type}-shadow-blur"]`).forEach(el => el.value = s.shadow.blur);
+                document.querySelectorAll(`[data-value-for="${type}-shadow-blur"]`).forEach(el => el.textContent = s.shadow.blur);
+                document.querySelectorAll(`[data-input="${type}-shadow-offsetX"]`).forEach(el => el.value = s.shadow.offsetX);
+                document.querySelectorAll(`[data-value-for="${type}-shadow-offsetX"]`).forEach(el => el.textContent = s.shadow.offsetX);
+                document.querySelectorAll(`[data-input="${type}-shadow-offsetY"]`).forEach(el => el.value = s.shadow.offsetY);
+                document.querySelectorAll(`[data-value-for="${type}-shadow-offsetY"]`).forEach(el => el.textContent = s.shadow.offsetY);
+            };
+
+            updateStyleInputs('main');
+            updateStyleInputs('note');
+        }
+
+		// --- EVENT HANDLING ---
+        function setupEventListeners() {
+            // Lắng nghe sự kiện input (Không thay đổi)
+            document.body.addEventListener('input', (e) => {
+                if(e.target.dataset.input) {
+                    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+                    handleInput(e.target.dataset.input, value);
                 }
-            };
-            const texts = { text1: textInputs.text1.value, text3: textInputs.text3.value.trim() };
-            if (!texts.text1 && !texts.text3) { alert("Bạn chưa nhập nội dung nào cả!"); return; }
-
-            showModal(loadingModal);
-            try {
-                const prompt = generateLotusPrompt(); 
-                const imageDataURL = await queryStabilityAPI(prompt);
-                await drawImageWithLayout(imageDataURL, options, texts);
-                hideModal(loadingModal);
-                showModal(resultModal);
-            } catch (error) {
-                hideModal(loadingModal);
-                alert(`Đã có lỗi xảy ra: ${error.message}`);
-                console.error('Lỗi:', error);
-            }
-        });
-
-        closeBtn.addEventListener('click', () => hideModal(resultModal));
-
-        // --- HỆ THỐNG BỐ CỤC ĐỘNG ---
-        async function drawImageWithLayout(imageDataURL, options, texts) {
-            return new Promise((resolve, reject) => {
-                const image = new Image();
-                image.src = imageDataURL;
-                image.onload = () => {
-                    const size = Math.min(image.width, image.height);
-                    canvas.width = size;
-                    canvas.height = size;
-                    const sx = (image.width - size) / 2;
-                    const sy = (image.height - size) / 2;
-                    ctx.drawImage(image, sx, sy, size, size, 0, 0, size, size);
-                    
-                    const mainFontProfile = fontProfiles.find(f => f.id === options.main.fontId);
-                    const mainStyleProfile = styleProfiles.find(s => s.id === options.main.styleId);
-                    const noteFontProfile = fontProfiles.find(f => f.id === options.note.fontId);
-                    const noteStyleProfile = styleProfiles.find(s => s.id === options.note.styleId);
-
-                    // Vẽ ghi chú (text3)
-                    if (texts.text3) {
-                        const noteBlock = {
-                            size: 22,
-                            font: noteFontProfile.main,
-                            color: options.note.color.value,
-                            boxColor: noteStyleProfile.boxColor,
-                            outlineColor: options.note.color.outline,
-                            position: options.note.position
-                        };
-                        const preparedNote = prepareTextBlock(ctx, texts.text3, noteBlock);
-                        preparedNote.drawCall(noteStyleProfile.method);
-                    }
-
-                    // Vẽ nội dung chính (text1)
-                    if (texts.text1) {
-                        const mainBlock = {
-                            size: options.main.size,
-                            font: mainFontProfile.main,
-                            color: options.main.color.value,
-                            boxColor: mainStyleProfile.boxColor,
-                            outlineColor: options.main.color.outline,
-                            position: options.main.position
-                        };
-                        const preparedMain = prepareTextBlock(ctx, texts.text1, mainBlock);
-                        preparedMain.drawCall(mainStyleProfile.method);
-                    }
-
-                    downloadBtn.href = canvas.toDataURL('image/png');
-                    URL.revokeObjectURL(image.src);
-                    resolve();
-                };
-                image.onerror = reject;
             });
-        }
 
-        function prepareTextBlock(ctx, text, block) {
-            const { width, height } = ctx.canvas;
-            const fontSize = block.size;
-            
-            ctx.font = `bold ${fontSize}px ${block.font}`;
-            const lines = wrapText(ctx, text, width * 0.9);
-            const lineHeight = fontSize * 1.3;
-            const blockHeight = (lines.length * lineHeight);
+            // Lắng nghe sự kiện change cho việc tải ảnh lên (Không thay đổi)
+            document.body.addEventListener('change', (e) => {
+                if (e.target.classList.contains('image-upload-input')) handleImageUpload(e.target.files[0]);
+            });
 
-            let startY, startX, textAlign;
+            // === BẮT ĐẦU PHẦN THAY THẾ ===
+            // Trình xử lý sự kiện CLICK mới, đã sửa lỗi cho iPhone
+            document.body.addEventListener('click', (e) => {
+                const button = e.target.closest('[data-action], #downloadBtn, #mobile-download-btn, .mobile-tool-btn');
+                
+                // Nếu không click vào nút nào có ý nghĩa thì bỏ qua
+                if (!button) return;
 
-            if (block.position.includes('Left')) {
-                startX = width * 0.05;
-                textAlign = 'left';
-            } else if (block.position.includes('Right')) {
-                startX = width * 0.95;
-                textAlign = 'right';
-            } else {
-                startX = width / 2;
-                textAlign = 'center';
-            }
+                // Xử lý các nút điều hướng và hành động
+                if (button.classList.contains('mobile-tool-btn')) {
+                    handleMobileNav(button);
+                }
+                if (button.dataset.action === 'generate-image') {
+                    handleImageGeneration();
+                }
+                if (button.dataset.action === 'upload-image') {
+                    button.closest('.control-panel-section').querySelector('.image-upload-input').click();
+                }
 
-            if (block.position.includes('top')) {
-                startY = height * 0.05;
-            } else if (block.position.includes('bottom')) {
-                startY = height - blockHeight - (height * 0.05);
-            } else { // center
-                startY = (height - blockHeight) / 2;
-            }
+                // Xử lý các nút TẢI VỀ (cả desktop và mobile)
+                if (button.id === 'downloadBtn' || button.id === 'mobile-download-btn') {
+                    e.preventDefault(); // Ngăn hành vi mặc định của thẻ <a>
 
-            return {
-                drawCall: (method) => {
-                    ctx.textAlign = textAlign;
-                    if (method === 'drawTextBox') {
-                        drawTextBox(ctx, lines, startX, startY, lineHeight, fontSize, block);
+                    const dataURL = canvas.toDataURL('image/png');
+                    // Kiểm tra có phải thiết bị iOS hay không
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+                    if (isIOS) {
+                        // Trên iPhone/iPad: Mở ảnh ở tab mới để người dùng tự lưu thủ công
+                        const newTab = window.open();
+                        newTab.document.body.style.margin = "0";
+                        newTab.document.body.style.background = "#222";
+                        newTab.document.write(`<img src="${dataURL}" style="width:100%; height:auto; display:block;">`);
                     } else {
-                        drawGlowedText(ctx, lines, startX, startY, lineHeight, fontSize, block);
+                        // Trên các thiết bị khác (Android, Máy tính): Tự động tải về
+                        const link = document.createElement('a');
+                        link.href = dataURL;
+                        link.download = 'thiep-phat-giao.png';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
                     }
                 }
+            });
+            // === KẾT THÚC PHẦN THAY THẾ ===
+
+            // Kích hoạt panel đầu tiên trên mobile (Không thay đổi)
+            document.querySelector('.mobile-tool-btn[data-panel="mobile-image-gen-panel"]').classList.add('active');
+        }
+        
+        function handleMobileNav(button) {
+            const panelId = button.dataset.panel;
+            if (!panelId) return;
+            document.querySelectorAll('.mobile-panel-instance').forEach(p => p.classList.add('hidden'));
+            document.getElementById(panelId).classList.remove('hidden');
+            document.querySelectorAll('.mobile-tool-btn').forEach(b => b.classList.remove('active'));
+            button.classList.add('active');
+        }
+
+	function handleInput(type, value) {
+            const s = state; // Viết tắt cho state
+
+            // Sử dụng switch-case để xử lý từng trường hợp một cách tường minh
+            switch(type) {
+                // Các thuộc tính chính
+                case 'main-text':           s.mainText = value; break;
+                case 'note-text':           s.noteText = value; break;
+                case 'layout':              s.layout = value; break;
+                
+                // Thuộc tính Logo
+                case 'logo-visible':        s.logo.visible = value; break;
+                case 'logo-size':           s.logo.size = value; break;
+
+                // Thuộc tính Văn Bản Chính
+                case 'main-font':                   s.main.font = value; break;
+                case 'main-color':                  s.main.color = value; break;
+                case 'main-font-size':              s.main.fontSize = value; break; // Sửa lỗi ở đây
+                case 'main-bg-visible':             s.main.background.visible = value; break;
+                case 'main-bg-color':               s.main.background.color = value; break;
+                case 'main-bg-opacity':             s.main.background.opacity = value; break;
+                case 'main-stroke-visible':         s.main.stroke.visible = value; break;
+                case 'main-stroke-color':           s.main.stroke.color = value; break;
+                case 'main-stroke-width':           s.main.stroke.width = value; break;
+                case 'main-shadow-visible':         s.main.shadow.visible = value; break;
+                case 'main-shadow-color':           s.main.shadow.color = value; break;
+                case 'main-shadow-blur':            s.main.shadow.blur = value; break;
+                case 'main-shadow-offsetX':         s.main.shadow.offsetX = value; break;
+                case 'main-shadow-offsetY':         s.main.shadow.offsetY = value; break;
+
+                // Thuộc tính Ghi Chú
+                case 'note-font':                   s.note.font = value; break;
+                case 'note-color':                  s.note.color = value; break;
+                case 'note-font-size':              s.note.fontSize = value; break; // Sửa lỗi ở đây
+                case 'note-bg-visible':             s.note.background.visible = value; break;
+                case 'note-bg-color':               s.note.background.color = value; break;
+                case 'note-bg-opacity':             s.note.background.opacity = value; break;
+                case 'note-stroke-visible':         s.note.stroke.visible = value; break;
+                case 'note-stroke-color':           s.note.stroke.color = value; break;
+                case 'note-stroke-width':           s.note.stroke.width = value; break;
+                case 'note-shadow-visible':         s.note.shadow.visible = value; break;
+                case 'note-shadow-color':           s.note.shadow.color = value; break;
+                case 'note-shadow-blur':            s.note.shadow.blur = value; break;
+                case 'note-shadow-offsetX':         s.note.shadow.offsetX = value; break;
+                case 'note-shadow-offsetY':         s.note.shadow.offsetY = value; break;
+            }
+
+            updateAllInputs();
+            redrawCanvas();
+        }
+        
+        // --- IMAGE HANDLING ---
+        function handleImageUpload(file) {
+            if (!file) return;
+            loadingOverlay.style.display = 'flex';
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const sourceSize = Math.min(img.width, img.height);
+                    const sx = (img.width - sourceSize) / 2;
+                    const sy = (img.height - sourceSize) / 2;
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = 1024;
+                    tempCanvas.height = 1024;
+                    tempCanvas.getContext('2d').drawImage(img, sx, sy, sourceSize, sourceSize, 0, 0, 1024, 1024);
+                    setBackgroundImage(tempCanvas.toDataURL('image/png'));
+                };
+                img.src = e.target.result;
             };
+            reader.readAsDataURL(file);
         }
 
-        // --- CÁC HÀM VẼ CHI TIẾT ---
-        function drawTextBox(ctx, lines, x, startY, lineHeight, fontSize, block) {
-            const padding = fontSize * 0.4;
-            lines.forEach((line, index) => {
-                const textMetrics = ctx.measureText(line);
-                const lineWidth = textMetrics.width;
-                
-                const bannerWidth = lineWidth + padding * 2;
-                const bannerHeight = fontSize + padding;
-                
-                const currentLineY = startY + (index * lineHeight);
-                const bannerX = x - (ctx.textAlign === 'center' ? bannerWidth / 2 : (ctx.textAlign === 'right' ? bannerWidth : 0));
-                
-                ctx.fillStyle = block.boxColor;
-                ctx.beginPath();
-                ctx.roundRect(bannerX, currentLineY, bannerWidth, bannerHeight, 10);
-                ctx.fill();
-
-                ctx.fillStyle = block.color;
-                ctx.textBaseline = 'top';
-                ctx.fillText(line, x, currentLineY + padding / 2);
-            });
+        async function handleImageGeneration() {
+            loadingOverlay.style.display = 'flex';
+            try {
+                const prompt = "masterpiece, best quality, beautiful anime style illustration of a lotus flower, scenic, soft lighting, clean lines, square image, buddhist theme, serene, spiritual, on a serene pond at sunrise with mist";
+                const response = await fetch(`/api/generate-image`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt }),
+                });
+                if (!response.ok) throw new Error(`Lỗi từ máy chủ: ${await response.text()}`);
+                const result = await response.json();
+                if (!result.artifacts || result.artifacts.length === 0) throw new Error('Không nhận được ảnh từ API.');
+                setBackgroundImage(`data:image/png;base64,${result.artifacts[0].base64}`);
+            } catch (error) {
+                console.error("Image generation failed:", error);
+                alert("Tạo ảnh thất bại: " + error.message);
+                loadingOverlay.style.display = 'none';
+            }
         }
 
-        function drawGlowedText(ctx, lines, x, startY, lineHeight, fontSize, block) {
-            ctx.textBaseline = 'top';
-            ctx.shadowColor = block.outlineColor;
-            ctx.fillStyle = block.color;
-            ctx.shadowBlur = 15;
-            ctx.shadowOffsetX = 2;
-            ctx.shadowOffsetY = 2;
+        // --- DRAWING ENGINE ---
+        function redrawCanvas() {
+            if (!backgroundImage.complete || !backgroundImage.src || !areFontsLoaded) {
+                 if (areFontsLoaded) drawInitialCanvas();
+                 return;
+            }
             
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
+            const currentLayout = layouts[state.layout];
+            if (isLogoLoaded && state.logo.visible) {
+                drawLogo(currentLayout.logo);
+            }
+            if (state.mainText.trim()) drawText(state.mainText, state.main, currentLayout.main);
+            if (state.noteText.trim()) drawText(state.noteText, state.note, currentLayout.note);
+        }
+        
+        function drawLogo(position) {
+            const logoSize = canvas.width * (state.logo.size / 100);
+            const margin = canvas.width * 0.04;
+            let { x, y } = getXY(position, margin, logoSize, logoSize, state.logo);
+            
+            if (position.h === 'right') x = canvas.width - margin - logoSize;
+
+            ctx.drawImage(logoImage, x, y, logoSize, logoSize);
+        }
+
+        function drawText(text, style, position) {
+            const fontSize = (canvas.width / 1024) * style.fontSize;
+            const margin = canvas.width * 0.04;
+            const maxWidth = canvas.width - (margin * 2);
+            
+            ctx.font = `bold ${fontSize}px "${style.font}"`;
+            
+            const lines = wrapText(ctx, text, maxWidth);
+            const lineHeight = fontSize * 1.3;
+            const textBlockHeight = lines.length * lineHeight;
+            const { x, y, textAlign } = getXY(position, margin, maxWidth, textBlockHeight, style);
+            ctx.textAlign = textAlign;
+
+            // Reset effects from previous drawing operation
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+            ctx.strokeStyle = 'transparent';
+            ctx.lineWidth = 0;
+
+            // Apply Shadow if enabled
+            if (style.shadow && style.shadow.visible) {
+                ctx.shadowColor = style.shadow.color;
+                ctx.shadowBlur = style.shadow.blur;
+                ctx.shadowOffsetX = style.shadow.offsetX;
+                ctx.shadowOffsetY = style.shadow.offsetY;
+            }
+
+            // Draw background if enabled
+            if (style.background && style.background.visible) {
+                 const originalShadowColor = ctx.shadowColor;
+                 ctx.shadowColor = 'transparent'; // Temporarily disable shadow for background rect
+
+                const hexToRgba = (hex, opacity) => {
+                    let r = 0, g = 0, b = 0;
+                    if (hex.length === 7) {
+                        r = parseInt(hex.slice(1, 3), 16);
+                        g = parseInt(hex.slice(3, 5), 16);
+                        b = parseInt(hex.slice(5, 7), 16);
+                    }
+                    return `rgba(${r},${g},${b},${opacity})`;
+                };
+                ctx.fillStyle = hexToRgba(style.background.color, style.background.opacity);
+                const padding = fontSize * 0.2;
+
+                lines.forEach((line, index) => {
+                    const lineWidth = ctx.measureText(line).width;
+                    let rectX;
+                    if (textAlign === 'center') rectX = x - lineWidth / 2 - padding;
+                    else if (textAlign === 'right') rectX = x - lineWidth - padding;
+                    else rectX = x - padding;
+                    
+                    const rectY = y + (index * lineHeight) - (fontSize * 0.9) - padding;
+                    const rectWidth = lineWidth + (padding * 2);
+                    const rectHeight = fontSize + (padding * 2);
+                    ctx.fillRect(rectX, rectY, rectWidth, rectHeight);
+                });
+
+                ctx.shadowColor = originalShadowColor; // Restore shadow
+            }
+            
+            // Draw Stroke if enabled
+            if (style.stroke && style.stroke.visible && style.stroke.width > 0) {
+                ctx.strokeStyle = style.stroke.color;
+                ctx.lineWidth = style.stroke.width;
+                lines.forEach((line, index) => {
+                    ctx.strokeText(line, x, y + (index * lineHeight));
+                });
+            }
+
+            // Draw foreground text
+            ctx.fillStyle = style.color;
             lines.forEach((line, index) => {
-                ctx.fillText(line, x, startY + (index * lineHeight));
+                ctx.fillText(line, x, y + (index * lineHeight));
             });
+
+            // Clear shadow for next drawing operation to avoid affecting other elements
             ctx.shadowColor = 'transparent';
         }
 
-        // --- CÁC HÀM PHỤ ---
+        function getXY(position, margin, blockWidth, blockHeight, style) {
+            let x, y, textAlign;
+            const fontSize = (canvas.width / 1024) * (style.fontSize || 0);
+
+            switch(position.h) {
+                case 'left': x = margin; textAlign = 'left'; break;
+                case 'right': x = canvas.width - margin; textAlign = 'right'; break;
+                default: x = canvas.width / 2; textAlign = 'center';
+            }
+            switch(position.v) {
+                case 'top': y = margin + fontSize; break;
+                case 'bottom': y = canvas.height - margin - blockHeight; break;
+                default: y = (canvas.height / 2) - (blockHeight / 2) + (fontSize * 0.75); break;
+            }
+            return { x, y, textAlign };
+        }
+        
         function wrapText(ctx, text, maxWidth) {
             const finalLines = [];
-            const initialLines = text.split('\n'); 
-
-            initialLines.forEach(line => {
-                const words = line.split(' ');
-                let currentLine = words[0] || '';
-
-                for (let i = 1; i < words.length; i++) {
-                    const word = words[i];
-                    const testLine = currentLine + " " + word;
-                    if (ctx.measureText(testLine).width < maxWidth && word !== '') {
-                        currentLine += " " + word;
-                    } else {
-                        finalLines.push(currentLine);
-                        currentLine = word;
+            text.split('\n').forEach(p => {
+                if (ctx.measureText(p).width < maxWidth) {
+                    finalLines.push(p);
+                    return;
+                }
+                let currentLine = '';
+                const words = p.split(' ');
+                if (words.length > 0) {
+                    currentLine = words[0] || '';
+                    for (let i = 1; i < words.length; i++) {
+                        if (ctx.measureText(currentLine + " " + words[i]).width < maxWidth) {
+                            currentLine += " " + words[i];
+                        } else {
+                            finalLines.push(currentLine);
+                            currentLine = words[i];
+                        }
                     }
                 }
                 finalLines.push(currentLine);
@@ -478,54 +935,83 @@
             return finalLines;
         }
 
-        function showModal(modal) {
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-        }
-        function hideModal(modal) {
-            modal.classList.add('opacity-0', 'pointer-events-none');
-        }
-
-        function setupLoadingUI() {
-            showModal(loadingModal);
-            generateBtn.disabled = true;
-            generateBtn.classList.add('opacity-50', 'cursor-not-allowed');
-        }
-
-        function showResultUI() {
-            hideModal(loadingModal);
-            showModal(resultModal);
-        }
-
-        function generateLotusPrompt() {
-            const base = "masterpiece, best quality, beautiful anime style illustration of a lotus flower, scenic, soft lighting, clean lines, square image";
-            const styles = ["on a serene pond at sunrise", "in a mystical garden with cinematic light", "minimalist, clean lines, vibrant colors", "with a traditional asian temple in the background"];
-            return `${base}, ${styles[Math.floor(Math.random() * styles.length)]}`;
-        }
-
-        // --- MODIFIED FUNCTION ---
-        // This function now calls our own backend proxy server
-        async function queryStabilityAPI(prompt) {
-            // The API call is now directed to our own server endpoint
-            const response = await fetch(`/api/generate-image`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ prompt: prompt }), // Send the prompt in the body
-            });
-
-            if (!response.ok) {
-                const errorResult = await response.json();
-                throw new Error(`Lỗi từ máy chủ: ${errorResult.error || 'Không rõ lỗi'}`);
-            }
-
-            const responseJSON = await response.json();
-            if (!responseJSON.artifacts || responseJSON.artifacts.length === 0) {
-                 throw new Error('Không nhận được ảnh từ API.');
-            }
-            const imageBase64 = responseJSON.artifacts[0].base64;
-            return `data:image/png;base64,${imageBase64}`;
-        }
+        init();
     </script>
+	<script>
+		// --- PWA: Đăng ký Service Worker và Xử lý cài đặt ---
+
+		// 1. Đăng ký Service Worker
+		if ('serviceWorker' in navigator) {
+			window.addEventListener('load', () => {
+				navigator.serviceWorker.register('/sw.js')
+					.then(registration => {
+						console.log('Service Worker đã được đăng ký thành công:', registration);
+					})
+					.catch(error => {
+						console.log('Đăng ký Service Worker thất bại:', error);
+					});
+			});
+		}
+
+	// 2. Xử lý sự kiện mời cài đặt ứng dụng (Tự động ẩn sau 3 giây)
+    let deferredPrompt;
+    let installPromptTimer; // Biến để lưu trữ bộ đếm thời gian
+    const installButton = document.createElement('button');
+
+    // Thiết kế style cho nút (Không thay đổi)
+    installButton.textContent = 'Cài đặt Ứng dụng';
+    installButton.style.position = 'fixed';
+    installButton.style.bottom = '20px';
+    installButton.style.right = '20px';
+    installButton.style.padding = '12px 20px';
+    installButton.style.backgroundColor = '#D97706';
+    installButton.style.color = 'white';
+    installButton.style.border = 'none';
+    installButton.style.borderRadius = '8px';
+    installButton.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+    installButton.style.fontWeight = 'bold';
+    installButton.style.zIndex = '10000';
+    installButton.style.display = 'none';
+    document.body.appendChild(installButton);
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        // Hiển thị nút mời cài đặt
+        installButton.style.display = 'block';
+
+        // *** BẮT ĐẦU THAY ĐỔI ***
+        // Đặt hẹn giờ để tự động ẩn nút sau 3 giây
+        installPromptTimer = setTimeout(() => {
+            installButton.style.display = 'none';
+        }, 3000); // 3000 mili-giây = 3 giây
+        // *** KẾT THÚC THAY ĐỔI ***
+    });
+
+    installButton.addEventListener('click', (e) => {
+        // *** BẮT ĐẦU THAY ĐỔI ***
+        // Hủy bỏ việc tự động ẩn nếu người dùng đã nhấn nút
+        if (installPromptTimer) {
+            clearTimeout(installPromptTimer);
+        }
+        // *** KẾT THÚC THAY ĐỔI ***
+
+        installButton.style.display = 'none';
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('Người dùng đã đồng ý cài đặt ứng dụng');
+            } else {
+                console.log('Người dùng đã từ chối cài đặt ứng dụng');
+            }
+            deferredPrompt = null;
+        });
+    });
+
+    window.addEventListener('appinstalled', (evt) => {
+        console.log('Ứng dụng đã được cài đặt.');
+        installButton.style.display = 'none';
+    });
+	</script>
 </body>
 </html>
