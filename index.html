@@ -767,7 +767,7 @@
         async function handleImageGeneration() {
             loadingOverlay.style.display = 'flex';
             try {
-                const prompt = "masterpiece, best quality, beautiful anime style illustration of a lotus flower, scenic, soft lighting, clean lines, square image, buddhist theme, serene, spiritual, on a serene pond at sunrise with mist";
+                const prompt = "A serene lotus pond glistens under the soft morning light. A single, perfect lotus flower floats in the foreground, its petals a gentle blend of pink and white. Above the distant green mountains, iridescent clouds drift across the vibrant blue sky, catching the sunlight and shimmering with all the colors of a rainbow. The tranquil scene is filled with a sense of peace and natural wonder.";
                 const response = await fetch(`/api/generate-image`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
