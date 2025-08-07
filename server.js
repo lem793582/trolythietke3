@@ -75,14 +75,16 @@ app.post('/api/generate-image', async (req, res) => {
                     key: keyIdentifier
                 }));
                 
-                // Vẫn xử lý ảnh nhị phân trả về từ Hugging Face 
-                const imageBuffer = await response.buffer(); [cite: 32]
-                const imageBase64 = imageBuffer.toString('base64'); [cite: 33]
-
-                // Chuyển về định dạng client mong đợi
+                // Đoạn mã đã sửa lỗi
+                const imageBuffer = await response.buffer();
+                const imageBase64 = imageBuffer.toString('base64');
+                
+                // Chuyển đổi về định dạng mà client-side đang mong đợi
                 const clientResponse = {
-                    artifacts: [{ base64: imageBase64 }]
-                }; [cite: 34]
+                    artifacts: [{
+                        base64: imageBase64
+                    }]
+                };
                 return res.json(clientResponse);
             }
 
