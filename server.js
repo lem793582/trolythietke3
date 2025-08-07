@@ -29,7 +29,6 @@ app.post('/api/generate-image', async (req, res) => {
         return res.status(400).json({ error: 'Prompt is required' });
     }
 
-    // 1. Vẫn lấy danh sách key của Hugging Face
     const apiKeysString = process.env.HUGGINGFACE_API_KEYS;
 
     if (!apiKeysString) {
@@ -43,21 +42,17 @@ app.post('/api/generate-image', async (req, res) => {
 
     const apiKeys = apiKeysString.split(',').map(key => key.trim());
 
-    // 2. Vẫn giữ URL mô hình của Hugging Face
     const modelUrl = 'https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0';
 
-    // 3. Vòng lặp luân chuyển key
     for (const apiKey of apiKeys) {
-        const keyIdentifier = `...${apiKey.slice(-4)}`; // Dùng để nhận diện key trong log
+        const keyIdentifier = `...${apiKey.slice(-4)}`;
         try {
-            // Ghi log khi bắt đầu thử một key
             console.log(JSON.stringify({
                 level: "info",
                 message: "Trying Hugging Face key",
                 key: keyIdentifier
             }));
 
-            // 4. Vẫn gọi API Hugging Face với cấu trúc body và header của họ
             const response = await fetch(modelUrl, {
                 method: 'POST',
                 headers: {
@@ -67,7 +62,6 @@ app.post('/api/generate-image', async (req, res) => {
                 body: JSON.stringify({ inputs: prompt }),
             });
 
-            // 5. Xử lý phản hồi thành công từ Hugging Face
             if (response.ok) {
                 console.log(JSON.stringify({
                     level: "info",
@@ -75,20 +69,15 @@ app.post('/api/generate-image', async (req, res) => {
                     key: keyIdentifier
                 }));
                 
-                // Đoạn mã đã sửa lỗi
                 const imageBuffer = await response.buffer();
                 const imageBase64 = imageBuffer.toString('base64');
-                
-                // Chuyển đổi về định dạng mà client-side đang mong đợi
+
                 const clientResponse = {
-                    artifacts: [{
-                        base64: imageBase64
-                    }]
+                    artifacts: [{ base64: imageBase64 }]
                 };
                 return res.json(clientResponse);
             }
 
-            // 6. Xử lý các lỗi phổ biến và ghi log JSON
             if (response.status === 401) {
                 console.warn(JSON.stringify({
                     level: "warn",
@@ -96,7 +85,7 @@ app.post('/api/generate-image', async (req, res) => {
                     key: keyIdentifier,
                     statusCode: 401
                 }));
-                continue; // Thử key tiếp theo
+                continue;
             }
             if (response.status === 503) {
                 console.warn(JSON.stringify({
@@ -105,15 +94,13 @@ app.post('/api/generate-image', async (req, res) => {
                     key: keyIdentifier,
                     statusCode: 503
                 }));
-                continue; // Thử key tiếp theo
+                continue;
             }
             
-            // Xử lý các lỗi khác
-            const errorResult = await response.json(); [cite: 38]
-            throw new Error(errorResult.error || 'Unknown error from Hugging Face'); [cite: 38]
+            const errorResult = await response.json();
+            throw new Error(errorResult.error || 'Unknown error from Hugging Face');
 
         } catch (error) {
-            // Ghi log JSON cho các lỗi bắt được
             console.error(JSON.stringify({
                 level: "error",
                 message: "Error with Hugging Face key",
@@ -123,12 +110,11 @@ app.post('/api/generate-image', async (req, res) => {
         }
     }
 
-    // Nếu tất cả các key đều thất bại
     console.error(JSON.stringify({
         level: "error",
         message: "All Hugging Face API keys failed. Unable to generate image."
     }));
-    res.status(500).json({ error: 'Failed to generate image. All available API keys failed.' }); [cite: 41]
+    res.status(500).json({ error: 'Failed to generate image. All available API keys failed.' });
 });
 
 // Khởi động server
